@@ -1,15 +1,17 @@
 .menuItem {
   box-sizing: border-box;
   list-style: none;
+  padding: 4px;
 }
 
 .button {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: calc(100% - 8px);
-  padding: 6px 10px;
-  margin: 4px;
+  width: 100%;
+  min-height: 28px;
+  padding: 6px 6px 6px 10px;
+  margin: 0;
   border: none;
   border-radius: 2px;
   background: none;
@@ -18,10 +20,15 @@
   cursor: pointer;
   transition: background-color 150ms ease-out;
   outline: none;
+  user-select: none;
 
-  &:hover:not(:disabled),
-  &.focused:not(:disabled) {
+  &:hover:not(:disabled):not(.focusedParent),
+  &.focused:not(:disabled):not(.focusedParent) {
     background-color: var(--context-menu-item-hover-bg);
+  }
+
+  &.focusedParent:not(:disabled) {
+    background-color: var(--context-menu-item-parent-bg);
   }
 
   &:disabled {

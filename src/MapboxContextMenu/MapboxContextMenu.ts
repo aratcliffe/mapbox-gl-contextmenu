@@ -67,7 +67,9 @@ export default class MapboxContextMenu extends ContextMenu {
       e.preventDefault();
       const ctx: ContextMenuContext = {
         map: this._map!,
-        event: e
+        event: e,
+        menuWidth: this.width,
+        menuTheme: this._theme
       };
       this.show(e.point.x, e.point.y, ctx);
     };

@@ -27,14 +27,14 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
   private _label: string;
   private _icon: string | undefined;
   private _iconPosition: "before" | "after";
-  private _disabled: boolean;
+  protected _disabled: boolean;
 
-  private _liEl: HTMLElement | null = null;
-  private _buttonEl: HTMLElement | null = null;
+  protected _liEl: HTMLElement | null = null;
+  protected _buttonEl: HTMLElement | null = null;
   private _iconEl: HTMLElement | null = null;
   private _labelEl: HTMLElement | null = null;
 
-  private _currentCtx: ContextMenuContext | null = null;
+  protected _currentCtx: ContextMenuContext | null = null;
 
   private _clickHandler: ((ev: MouseEvent) => void) | null = null;
 
@@ -118,6 +118,19 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
     }
   }
 
+  remove(): this {
+    this._removeEventListeners();
+
+    this._liEl?.remove();
+
+    this._liEl = null;
+    this._buttonEl = null;
+    this._iconEl = null;
+    this._labelEl = null;
+    this._currentCtx = null;
+    return this;
+  }
+
   private _setupUI(): void {
     const li = createElement("li", {
       role: "presentation",
@@ -142,6 +155,35 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
     });
     labelEl.textContent = this._label;
 
+    if (this._iconPosition === "before") {
+      button.appendChild(iconEl);
+      button.appendChild(labelEl);
+    } else {
+      button.appendChild(labelEl);
+      button.appendChild(iconEl);
+    }
+
+    li.appendChild(button);
+
+    this._liEl = li;
+    this._buttonEl = button;
+    this._labelEl = labelEl;
+
+    this._addEventListeners();
+  }
+
+  private _updateIcon(): void {
+    if (!this._iconEl) return;
+
+    this._iconEl.className = this._icon
+      ? `${styles.icon} ${this._icon}`
+      : styles.icon;
+    this._iconEl.style.display = this._icon ? "" : "none";
+  }
+
+  protected _addEventListeners(): void {
+    if (!this._buttonEl) return;
+
     this._clickHandler = (ev: MouseEvent) => {
       ev.preventDefault();
 
@@ -157,45 +199,13 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
       }
     };
 
-    button.addEventListener("click", this._clickHandler);
-
-    if (this._iconPosition === "before") {
-      button.appendChild(iconEl);
-      button.appendChild(labelEl);
-    } else {
-      button.appendChild(labelEl);
-      button.appendChild(iconEl);
-    }
-
-    li.appendChild(button);
-
-    this._liEl = li;
-    this._buttonEl = button;
-    this._labelEl = labelEl;
+    this._buttonEl.addEventListener("click", this._clickHandler);
   }
 
-  private _updateIcon(): void {
-    if (!this._iconEl) return;
-
-    this._iconEl.className = this._icon
-      ? `${styles.icon} ${this._icon}`
-      : styles.icon;
-    this._iconEl.style.display = this._icon ? "" : "none";
-  }
-
-  remove(): this {
+  protected _removeEventListeners(): void {
     if (this._buttonEl && this._clickHandler) {
       this._buttonEl.removeEventListener("click", this._clickHandler);
       this._clickHandler = null;
     }
-
-    this._liEl?.remove();
-
-    this._liEl = null;
-    this._buttonEl = null;
-    this._iconEl = null;
-    this._labelEl = null;
-    this._currentCtx = null;
-    return this;
   }
 }

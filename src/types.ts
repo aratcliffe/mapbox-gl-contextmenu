@@ -1,10 +1,14 @@
 import type { Map, MapMouseEvent } from "mapbox-gl";
 import type ContextMenuItem from "./ContextMenuItem";
 import type ContextMenuSeparator from "./ContextMenuSeparator";
+import type ContextMenuSub from "./ContextMenuSub";
+import type { ContextMenuTheme } from "./ContextMenu/ContextMenu";
 
 export interface ContextMenuContext {
   map: Map;
   event: MapMouseEvent;
+  menuWidth?: string | number;
+  menuTheme?: ContextMenuTheme;
 }
 
 export interface ContextMenuItemEventData {
@@ -15,4 +19,11 @@ export interface ContextMenuItemEventData {
   map: Map;
 }
 
-export type MenuItem = ContextMenuItem | ContextMenuSeparator;
+export interface Focusable {
+  readonly disabled: boolean;
+  focus(): void;
+  blur(): void;
+  click(): void;
+}
+
+export type MenuItem = ContextMenuItem | ContextMenuSeparator | ContextMenuSub;

@@ -6,6 +6,13 @@ export default defineConfig(({ command }) => {
 
   if (isBuild) {
     return {
+      css: {
+        preprocessorOptions: {
+          scss: {
+            api: "modern-compiler"
+          }
+        }
+      },
       build: {
         emptyOutDir: false,
         lib: {
@@ -34,6 +41,13 @@ export default defineConfig(({ command }) => {
   return {
     root: "example",
     envDir: resolve(__dirname, "."),
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler"
+        }
+      }
+    },
     server: {
       port: 3000,
       open: true

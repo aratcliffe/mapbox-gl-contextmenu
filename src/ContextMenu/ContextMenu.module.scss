@@ -2,13 +2,16 @@
   --context-menu-bg: #141414;
   --context-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --context-menu-item-text-color: white;
-  --context-menu-item-hover-bg: #282828;
+  --context-menu-item-hover-bg: #323232;
+  --context-menu-item-parent-bg: #1e1e1e;
   --context-menu-item-disabled-opacity: 0.5;
   --context-menu-separator-color: #505050;
 }
 
 .menu {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   background: var(--context-menu-bg);
   border-radius: var(--context-menu-border-radius, 4px);
   box-shadow: var(--context-menu-shadow);
@@ -22,7 +25,8 @@
   --context-menu-bg: white;
   --context-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   --context-menu-item-text-color: black;
-  --context-menu-item-hover-bg: #f0f0f0;
+  --context-menu-item-hover-bg: #e8e8e8;
+  --context-menu-item-parent-bg: #f3f3f3;
   --context-menu-item-disabled-opacity: 0.5;
   --context-menu-separator-color: #e8e8e8;
 

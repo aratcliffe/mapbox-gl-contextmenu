@@ -1,4 +1,6 @@
 import { ContextMenuContext, MenuItem } from "../types";
+import { isFocusable } from "../util/focusable";
+import ContextMenuSub from "../ContextMenuSub/ContextMenuSub";
 import { createElement } from "../util/dom";
 import styles from "./ContextMenu.module.scss";
 
@@ -11,16 +13,19 @@ export interface ContextMenuOptions {
 }
 
 export default class ContextMenu {
-  private _items: MenuItem[] = [];
+  protected _items: MenuItem[] = [];
   private _className: string;
-  private _theme: ContextMenuTheme;
+  protected _theme: ContextMenuTheme;
   private _width: string | number | undefined;
-  private _menuEl: HTMLElement | null = null;
+  protected _menuEl: HTMLElement | null = null;
   private _container: HTMLElement | null = null;
+
   private _menuClickHandler: ((ev: MouseEvent) => void) | null = null;
 
   private _focusedIndex: number = -1;
   private _keyHandler: ((ev: KeyboardEvent) => void) | null = null;
+
+  private _onEscapeLeft: (() => void) | null = null;
 
   constructor(options?: ContextMenuOptions) {
     this._className = options?.className ?? styles.menu;
@@ -35,6 +40,43 @@ export default class ContextMenu {
   set width(value: string | number | undefined) {
     this._width = value;
     this._updateWidth();
+  }
+
+  get theme(): ContextMenuTheme {
+    return this._theme;
+  }
+
+  set theme(value: ContextMenuTheme) {
+    this._theme = value;
+    this._updateTheme();
+  }
+
+  get menuElement(): HTMLElement | null {
+    return this._menuEl;
+  }
+
+  get items(): readonly MenuItem[] {
+    return this._items;
+  }
+
+  /**
+   * Set a callback to be invoked when ArrowLeft is pressed.
+   * Used by submenus to return focus to parent.
+   */
+  set onEscapeLeft(callback: (() => void) | null) {
+    this._onEscapeLeft = callback;
+  }
+
+  /**
+   * Focus the first focusable item in the menu.
+   */
+  focusFirstItem(): void {
+    for (let i = 0; i < this._items.length; i++) {
+      if (this._isFocusable(this._items[i])) {
+        this._focusItem(i);
+        return;
+      }
+    }
   }
 
   addItem(item: MenuItem): this {
@@ -54,44 +96,6 @@ export default class ContextMenu {
       item.remove();
     }
     return this;
-  }
-
-  protected show(x: number, y: number, context: ContextMenuContext): void {
-    if (!this._menuEl) return;
-
-    this._items.forEach((item) => {
-      item.render(this._menuEl!, context);
-    });
-
-    const { left, top } = this._positionInViewport(x, y);
-
-    this._menuEl.style.left = `${left}px`;
-    this._menuEl.style.top = `${top}px`;
-
-    this._menuEl.classList.add(styles.visible);
-
-    this._focusedIndex = -1;
-
-    this._keyHandler = this._handleKeydown.bind(this);
-    document.addEventListener("keydown", this._keyHandler);
-
-    this._menuEl.focus();
-  }
-
-  protected hide(): void {
-    if (!this._menuEl) return;
-
-    this._menuEl.classList.remove(styles.visible);
-
-    if (this._keyHandler) {
-      document.removeEventListener("keydown", this._keyHandler);
-      this._keyHandler = null;
-    }
-
-    if (this._focusedIndex !== -1) {
-      (this._items[this._focusedIndex] as any).blur();
-      this._focusedIndex = -1;
-    }
   }
 
   addTo(container: HTMLElement): this {
@@ -115,22 +119,80 @@ export default class ContextMenu {
     return this;
   }
 
+  show(x: number, y: number, context: ContextMenuContext): void {
+    if (!this._menuEl) return;
+
+    this._items.forEach((item) => {
+      item.render(this._menuEl!, context);
+    });
+
+    const { left, top } = this._positionInViewport(x, y);
+
+    this._menuEl.style.left = `${left}px`;
+    this._menuEl.style.top = `${top}px`;
+
+    this._menuEl.classList.add(styles.visible);
+
+    this._focusedIndex = -1;
+
+    this._keyHandler = this._handleKeydown.bind(this);
+    document.addEventListener("keydown", this._keyHandler);
+
+    this._menuEl.focus();
+  }
+
+  hide(): void {
+    if (!this._menuEl) return;
+
+    this._menuEl.classList.remove(styles.visible);
+
+    if (this._keyHandler) {
+      document.removeEventListener("keydown", this._keyHandler);
+      this._keyHandler = null;
+    }
+
+    if (this._focusedIndex !== -1) {
+      const item = this._items[this._focusedIndex];
+      if (isFocusable(item)) {
+        item.blur();
+      }
+      this._focusedIndex = -1;
+    }
+
+    // Close any open submenus
+    this._items.forEach((item) => {
+      if (item instanceof ContextMenuSub) {
+        item.blur();
+      }
+    });
+  }
+
   private _focusItem(index: number): void {
     if (this._focusedIndex !== -1 && this._items[this._focusedIndex]) {
-      (this._items[this._focusedIndex] as any).blur();
+      const prevItem = this._items[this._focusedIndex];
+      if (isFocusable(prevItem)) {
+        prevItem.blur();
+      }
     }
 
     if (index >= 0 && index < this._items.length) {
       this._focusedIndex = index;
-      (this._items[this._focusedIndex] as any).focus();
+      const item = this._items[this._focusedIndex];
+      if (isFocusable(item)) {
+        item.focus();
+      }
     } else {
       this._focusedIndex = -1;
     }
   }
 
-  // --- ContextMenu.ts (Modified _handleKeydown method) ---
   private _handleKeydown(ev: KeyboardEvent): void {
     if (!this._menuEl || !this._menuEl.classList.contains(styles.visible)) {
+      return;
+    }
+
+    // Only handle keys if focus is within this menu
+    if (!this._menuEl.contains(document.activeElement)) {
       return;
     }
 
@@ -175,21 +237,48 @@ export default class ContextMenu {
         }
         break;
 
+      case "ArrowRight":
+        if (this._focusedIndex !== -1) {
+          const item = this._items[this._focusedIndex];
+          if (item instanceof ContextMenuSub) {
+            item.openAndFocusSubmenu();
+            ev.preventDefault();
+            return;
+          }
+        }
+        return;
+
       case "Enter":
       case " ":
-        if (
-          this._focusedIndex !== -1 &&
-          this._isFocusable(this._items[this._focusedIndex])
-        ) {
-          (this._items[this._focusedIndex] as any).click();
-          this.hide();
+        if (this._focusedIndex !== -1) {
+          const item = this._items[this._focusedIndex];
+          // For submenus, open and focus instead of clicking
+          if (item instanceof ContextMenuSub) {
+            item.openAndFocusSubmenu();
+            ev.preventDefault();
+            return;
+          }
+          if (isFocusable(item) && "listens" in item && item.listens("click")) {
+            item.click();
+            this.hide();
+          }
         }
         ev.preventDefault();
         return;
+
+      case "ArrowLeft":
+        // If we have a callback (we're a submenu), go back to parent
+        if (this._onEscapeLeft) {
+          this._onEscapeLeft();
+          ev.preventDefault();
+        }
+        return;
+
       case "Escape":
         this.hide();
         ev.preventDefault();
         return;
+
       default:
         return;
     }
@@ -199,9 +288,8 @@ export default class ContextMenu {
     }
   }
 
-  private _isFocusable(item: MenuItem): boolean {
-    const itemAny = item as any;
-    return item && !itemAny.disabled && typeof itemAny.focus === "function";
+  private _isFocusable(item: MenuItem): item is MenuItem & { disabled: boolean; focus(): void } {
+    return isFocusable(item) && !item.disabled;
   }
 
   private _setupUI(): void {
@@ -214,12 +302,6 @@ export default class ContextMenu {
     menu.style.position = "absolute";
     menu.setAttribute("tabindex", "-1"); // Essential for focusing the menu itself
 
-    if (this._theme === "light") {
-      menu.classList.add("themeLight");
-    } else if (this._theme === "dark") {
-      menu.classList.add("themeDark");
-    }
-
     this._menuClickHandler = () => {
       this.hide();
     };
@@ -230,6 +312,7 @@ export default class ContextMenu {
     this._menuEl = menu;
 
     this._updateWidth();
+    this._updateTheme();
   }
 
   private _updateWidth(): void {
@@ -240,6 +323,17 @@ export default class ContextMenu {
         typeof this._width === "number" ? `${this._width}px` : this._width;
     } else {
       this._menuEl.style.width = "";
+    }
+  }
+
+  private _updateTheme(): void {
+    if (!this._menuEl) return;
+
+    this._menuEl.classList.remove("themeLight", "themeDark");
+    if (this._theme === "light") {
+      this._menuEl.classList.add("themeLight");
+    } else if (this._theme === "dark") {
+      this._menuEl.classList.add("themeDark");
     }
   }
 

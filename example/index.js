@@ -2,7 +2,8 @@ import mapboxgl from "mapbox-gl";
 import {
   MapboxContextMenu,
   ContextMenuItem,
-  ContextMenuSeparator
+  ContextMenuSeparator,
+  ContextMenuSub
 } from "../src/index";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -47,12 +48,22 @@ map.on("load", () => {
   const separator = new ContextMenuSeparator();
   contextMenu.addItem(separator);
 
-  const directionsItem = new ContextMenuItem({
+  const directionsSubmenu = new ContextMenuSub({
     label: "Get directions",
     icon: "fa-solid fa-route"
   });
 
-  contextMenu.addItem(directionsItem);
+  const directionsToHere = new ContextMenuItem({
+    label: "Directions to here"
+  });
+
+  const directionsFromHere = new ContextMenuItem({
+    label: "Directions from here"
+  });
+
+  directionsSubmenu.addItem(directionsToHere);
+  directionsSubmenu.addItem(directionsFromHere);
+  contextMenu.addItem(directionsSubmenu);
 
   contextMenu.addTo(map);
 });
