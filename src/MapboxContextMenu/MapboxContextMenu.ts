@@ -1,54 +1,29 @@
 import type { Map as MapboxMap, MapMouseEvent } from "mapbox-gl";
-import ContextMenuItem from "../ContextMenuItem";
 import { ContextMenuContext } from "../types";
-import styles from "./MapboxContextMenu.module.css";
+import { ContextMenu, ContextMenuOptions } from "../ContextMenu";
 
-export interface MapboxContextMenuOptions {
-  className?: string;
-}
+export interface MapboxContextMenuOptions extends ContextMenuOptions {}
 
-export default class MapboxContextMenu {
+export default class MapboxContextMenu extends ContextMenu {
   private _map: MapboxMap | null = null;
   private _target: string | undefined = undefined;
-  private _items: ContextMenuItem[] = [];
-  private _className: string;
-  private _itemClickHandlers = new Map<ContextMenuItem, () => void>();
   private _handlers = {
     contextmenu: null as ((e: MapMouseEvent) => void) | null,
     mousedown: null as ((e: MapMouseEvent) => void) | null,
     move: null as (() => void) | null
   };
-  private _menuEl: HTMLMenuElement | null = null;
 
   constructor(options?: MapboxContextMenuOptions) {
-    this._className = options?.className ?? styles.menu;
+    super(options);
   }
 
-  addItem(item: ContextMenuItem): this {
-    this._items.push(item);
-    const handler = () => {
-      this._hide();
-    };
-    item.addEventListener("click", handler);
-    this._itemClickHandlers.set(item, handler);
-    return this;
-  }
-
-  removeItem(item: ContextMenuItem): this {
-    const index = this._items.indexOf(item);
-    if (index !== -1) {
-      this._items.splice(index, 1);
-      this._removeItemEventListener(item);
-      item.remove();
-    }
-    return this;
-  }
-
+  // @ts-expect-error - Override with different signature for Mapbox-specific API
   addTo(map: MapboxMap, target?: string): this {
     this._map = map;
     this._target = target;
 
-    this._createElements();
+    ContextMenu.prototype.addTo.call(this, map.getContainer());
+
     this._addEventListeners();
 
     return this;
@@ -58,41 +33,29 @@ export default class MapboxContextMenu {
     if (!this._map) return this;
 
     this._removeEventListeners();
-    this._removeItems();
+    super.remove();
 
-    if (this._menuEl?.parentElement) {
-      this._menuEl.remove();
-    }
-
-    this._menuEl = null;
     this._map = null;
     this._target = undefined;
     return this;
   }
 
-  private _createElements(): void {
-    const menu = document.createElement("menu");
-    menu.className = this._className;
-    menu.setAttribute("role", "menu");
-    menu.style.position = "absolute";
-
-    this._map!.getContainer().appendChild(menu);
-
-    this._menuEl = menu;
-  }
-
   private _addEventListeners(): void {
     this._handlers.contextmenu = (e: MapMouseEvent) => {
       e.preventDefault();
-      this._show(e);
+      const ctx: ContextMenuContext = {
+        map: this._map!,
+        event: e
+      };
+      this.show(e.point.x, e.point.y, ctx);
     };
 
     this._handlers.mousedown = () => {
-      this._hide();
+      this.hide();
     };
 
     this._handlers.move = () => {
-      this._hide();
+      this.hide();
     };
 
     if (this._target) {
@@ -124,86 +87,5 @@ export default class MapboxContextMenu {
       }
       this._handlers[event as keyof typeof this._handlers] = null;
     }
-  }
-
-  private _removeItems(): void {
-    this._items.forEach((item) => {
-      this._removeItemEventListener(item);
-      item.remove();
-    });
-    this._items = [];
-    this._itemClickHandlers.clear();
-  }
-
-  private _removeItemEventListener(item: ContextMenuItem): void {
-    const handler = this._itemClickHandlers.get(item);
-    if (handler) {
-      item.removeEventListener("mousedown", handler);
-      this._itemClickHandlers.delete(item);
-    }
-  }
-
-  private _positionInViewport(
-    x: number,
-    y: number
-  ): { left: number; top: number } {
-    if (!this._menuEl || !this._map) {
-      return { left: x, top: y };
-    }
-
-    const container = this._map.getContainer();
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    // Ensure menu has been made visible so offsetWidth/Height are accurate
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this._menuEl.offsetWidth;
-
-    const menuWidth = this._menuEl.offsetWidth;
-    const menuHeight = this._menuEl.offsetHeight;
-
-    let left = x;
-    let top = y;
-
-    if (left + menuWidth > containerWidth) {
-      left = containerWidth - menuWidth;
-    }
-    if (top + menuHeight > containerHeight) {
-      top = containerHeight - menuHeight;
-    }
-
-    if (left < 0) left = 0;
-    if (top < 0) top = 0;
-
-    return { left, top };
-  }
-
-  private _show(event: MapMouseEvent): void {
-    if (!this._menuEl) return;
-
-    const ctx: ContextMenuContext = {
-      map: this._map!,
-      event: event
-    };
-
-    this._items.forEach((item) => {
-      item.render(this._menuEl!, ctx);
-    });
-
-    const { left, top } = this._positionInViewport(
-      event.point.x,
-      event.point.y
-    );
-
-    this._menuEl.style.left = `${left}px`;
-    this._menuEl.style.top = `${top}px`;
-
-    this._menuEl.classList.add(styles.visible);
-  }
-
-  private _hide(): void {
-    if (!this._menuEl) return;
-
-    this._menuEl.classList.remove(styles.visible);
   }
 }
