@@ -1,19 +1,22 @@
 import { ContextMenuContext, MenuItem } from "../types";
-import styles from "./ContextMenu.module.css";
+import styles from "./ContextMenu.module.scss";
 
 export interface ContextMenuOptions {
   className?: string;
+  theme?: "light" | "dark" | "auto";
 }
 
 export default class ContextMenu {
   private _items: MenuItem[] = [];
   private _className: string;
+  private _theme: "light" | "dark" | "auto";
   private _menuEl: HTMLMenuElement | null = null;
   private _container: HTMLElement | null = null;
   private _menuClickHandler: ((ev: MouseEvent) => void) | null = null;
 
   constructor(options?: ContextMenuOptions) {
     this._className = options?.className ?? styles.menu;
+    this._theme = options?.theme ?? "auto";
   }
 
   addItem(item: MenuItem): this {
@@ -82,6 +85,13 @@ export default class ContextMenu {
 
     const menu = document.createElement("menu");
     menu.className = this._className;
+
+    if (this._theme === "light") {
+      menu.classList.add("themeLight");
+    } else if (this._theme === "dark") {
+      menu.classList.add("themeDark");
+    }
+
     menu.setAttribute("role", "menu");
     menu.style.position = "absolute";
 

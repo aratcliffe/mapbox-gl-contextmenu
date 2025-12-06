@@ -1,5 +1,5 @@
 import type { ContextMenuContext } from "../types";
-import styles from "./ContextMenuSeparator.module.css";
+import styles from "./ContextMenuSeparator.module.scss";
 
 export interface ContextMenuSeparatorOptions {
   id?: string;

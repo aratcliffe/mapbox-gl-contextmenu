@@ -1,6 +1,6 @@
 import type { ContextMenuContext } from "../types";
 import { ContextMenuItemEvent } from "./ContextMenuItemEvent";
-import styles from "./ContextMenuItem.module.css";
+import styles from "./ContextMenuItem.module.scss";
 
 export interface ContextMenuItemOptions {
   id?: string;

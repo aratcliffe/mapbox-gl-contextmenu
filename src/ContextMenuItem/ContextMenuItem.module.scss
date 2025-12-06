@@ -13,15 +13,17 @@
   border: none;
   border-radius: 2px;
   background: none;
+  color: var(--context-menu-item-text-color);
   text-align: left;
   cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: var(--context-menu-item-hover-bg);
+  }
+
+  &:disabled {
+    opacity: var(--context-menu-item-disabled-opacity);
+    cursor: not-allowed;
+  }
 }
 
-.button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-}
-
-.button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
