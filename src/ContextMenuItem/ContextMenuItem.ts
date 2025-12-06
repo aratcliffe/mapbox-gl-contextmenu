@@ -98,6 +98,26 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
     return liEl;
   }
 
+  focus(): void {
+    if (this._buttonEl && !this._disabled) {
+      this._buttonEl.classList.add(styles.focused);
+      (this._buttonEl as HTMLButtonElement).focus();
+    }
+  }
+
+  blur(): void {
+    if (this._buttonEl) {
+      this._buttonEl.classList.remove(styles.focused);
+      (this._buttonEl as HTMLButtonElement).blur();
+    }
+  }
+
+  click(): void {
+    if (this._buttonEl && !this._disabled) {
+      this._buttonEl.click();
+    }
+  }
+
   private _setupUI(): void {
     const li = createElement("li", {
       role: "presentation",

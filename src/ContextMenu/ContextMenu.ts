@@ -19,6 +19,9 @@ export default class ContextMenu {
   private _container: HTMLElement | null = null;
   private _menuClickHandler: ((ev: MouseEvent) => void) | null = null;
 
+  private _focusedIndex: number = -1;
+  private _keyHandler: ((ev: KeyboardEvent) => void) | null = null;
+
   constructor(options?: ContextMenuOptions) {
     this._className = options?.className ?? styles.menu;
     this._theme = options?.theme ?? "auto";
@@ -66,12 +69,29 @@ export default class ContextMenu {
     this._menuEl.style.top = `${top}px`;
 
     this._menuEl.classList.add(styles.visible);
+
+    this._focusedIndex = -1;
+
+    this._keyHandler = this._handleKeydown.bind(this);
+    document.addEventListener("keydown", this._keyHandler);
+
+    this._menuEl.focus();
   }
 
   protected hide(): void {
     if (!this._menuEl) return;
 
     this._menuEl.classList.remove(styles.visible);
+
+    if (this._keyHandler) {
+      document.removeEventListener("keydown", this._keyHandler);
+      this._keyHandler = null;
+    }
+
+    if (this._focusedIndex !== -1) {
+      (this._items[this._focusedIndex] as any).blur();
+      this._focusedIndex = -1;
+    }
   }
 
   addTo(container: HTMLElement): this {
@@ -95,6 +115,65 @@ export default class ContextMenu {
     return this;
   }
 
+  private _focusItem(index: number): void {
+    if (this._focusedIndex !== -1 && this._items[this._focusedIndex]) {
+      (this._items[this._focusedIndex] as any).blur();
+    }
+
+    if (index >= 0 && index < this._items.length) {
+      this._focusedIndex = index;
+      (this._items[this._focusedIndex] as any).focus();
+    } else {
+      this._focusedIndex = -1;
+    }
+  }
+
+  private _handleKeydown(ev: KeyboardEvent): void {
+    if (!this._menuEl || !this._menuEl.classList.contains(styles.visible)) {
+      return;
+    }
+
+    const len = this._items.length;
+    if (len === 0) return;
+
+    let newIndex = this._focusedIndex;
+
+    switch (ev.key) {
+      case "ArrowDown":
+        if (this._focusedIndex === -1) {
+          newIndex = 0;
+        } else if (this._focusedIndex < len - 1) {
+          newIndex = this._focusedIndex + 1;
+        }
+        ev.preventDefault();
+        break;
+      case "ArrowUp":
+        if (this._focusedIndex > 0) {
+          newIndex = this._focusedIndex - 1;
+        }
+        ev.preventDefault();
+        break;
+      case "Enter":
+      case " ":
+        if (this._focusedIndex !== -1) {
+          (this._items[this._focusedIndex] as any).click();
+          this.hide();
+        }
+        ev.preventDefault();
+        return;
+      case "Escape":
+        this.hide();
+        ev.preventDefault();
+        return;
+      default:
+        return;
+    }
+
+    if (newIndex !== this._focusedIndex) {
+      this._focusItem(newIndex);
+    }
+  }
+
   private _setupUI(): void {
     if (!this._container) return;
 
@@ -103,6 +182,7 @@ export default class ContextMenu {
       class: this._className
     });
     menu.style.position = "absolute";
+    menu.setAttribute("tabindex", "-1"); // Essential for focusing the menu itself
 
     if (this._theme === "light") {
       menu.classList.add("themeLight");
