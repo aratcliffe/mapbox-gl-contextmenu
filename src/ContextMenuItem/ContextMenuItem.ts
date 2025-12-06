@@ -9,6 +9,7 @@ export interface ContextMenuItemOptions {
   label: string;
   icon?: string;
   iconClass?: string;
+  iconPosition?: "before" | "after";
   disabled?: boolean;
 }
 
@@ -16,11 +17,12 @@ let nextId = 0;
 
 export default class ContextMenuItem extends EventTarget {
   public readonly id: string;
+  private _className: string;
+  private _buttonClassName: string;
   private _label: string;
   private _icon: string | undefined;
   private _iconClass: string | undefined;
-  private _className: string;
-  private _buttonClassName: string;
+  private _iconPosition: "before" | "after";
   private _disabled: boolean;
 
   private _liEl: HTMLLIElement | null = null;
@@ -35,11 +37,12 @@ export default class ContextMenuItem extends EventTarget {
   constructor(options: ContextMenuItemOptions) {
     super();
     this.id = options.id ?? `menu-item-${nextId++}`;
+    this._className = options.className ?? styles.menuItem;
+    this._buttonClassName = options.buttonClassName ?? styles.button;
     this._label = options.label;
     this._icon = options.icon;
     this._iconClass = options.iconClass;
-    this._className = options.className ?? styles.menuItem;
-    this._buttonClassName = options.buttonClassName ?? styles.button;
+    this._iconPosition = options.iconPosition ?? "before";
     this._disabled = options.disabled ?? false;
   }
 
@@ -132,8 +135,15 @@ export default class ContextMenuItem extends EventTarget {
     };
 
     button.addEventListener("click", this._clickHandler);
-    button.appendChild(iconEl);
-    button.appendChild(labelEl);
+
+    if (this._iconPosition === "before") {
+      button.appendChild(iconEl);
+      button.appendChild(labelEl);
+    } else {
+      button.appendChild(labelEl);
+      button.appendChild(iconEl);
+    }
+
     li.appendChild(button);
 
     this._liEl = li;
