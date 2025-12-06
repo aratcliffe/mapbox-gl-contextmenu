@@ -18,7 +18,8 @@ map.on("load", () => {
   const contextMenu = new MapboxContextMenu();
 
   const showCoordinatesItem = new ContextMenuItem({
-    label: "Show coordinates"
+    label: "Show coordinates",
+    icon: "fa-solid fa-location-dot"
   });
 
   showCoordinatesItem.addEventListener("click", ({ lngLat }) => {
@@ -33,7 +34,8 @@ map.on("load", () => {
   contextMenu.addItem(separator);
 
   const centerMapItem = new ContextMenuItem({
-    label: "Center map here"
+    label: "Center map here",
+    icon: "fa-solid fa-crosshairs"
   });
 
   centerMapItem.addEventListener("click", ({ map, lngLat }) => {

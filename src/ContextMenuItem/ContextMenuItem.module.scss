@@ -16,6 +16,7 @@
   color: var(--context-menu-item-text-color);
   text-align: left;
   cursor: pointer;
+  transition: background-color 150ms ease-out;
 
   &:hover:not(:disabled) {
     background-color: var(--context-menu-item-hover-bg);

@@ -8,7 +8,6 @@ export interface ContextMenuItemOptions {
   buttonClassName?: string;
   label: string;
   icon?: string;
-  iconClass?: string;
   iconPosition?: "before" | "after";
   disabled?: boolean;
 }
@@ -16,12 +15,13 @@ export interface ContextMenuItemOptions {
 let nextId = 0;
 
 export default class ContextMenuItem extends EventTarget {
+  private static readonly BASE_ICON_CLASS = "context-menu-icon";
+
   public readonly id: string;
   private _className: string;
   private _buttonClassName: string;
   private _label: string;
   private _icon: string | undefined;
-  private _iconClass: string | undefined;
   private _iconPosition: "before" | "after";
   private _disabled: boolean;
 
@@ -41,7 +41,6 @@ export default class ContextMenuItem extends EventTarget {
     this._buttonClassName = options.buttonClassName ?? styles.button;
     this._label = options.label;
     this._icon = options.icon;
-    this._iconClass = options.iconClass;
     this._iconPosition = options.iconPosition ?? "before";
     this._disabled = options.disabled ?? false;
   }
@@ -64,17 +63,6 @@ export default class ContextMenuItem extends EventTarget {
 
   set icon(value: string | undefined) {
     this._icon = value;
-    this._iconClass = undefined;
-    this._updateIcon();
-  }
-
-  get iconClass(): string | undefined {
-    return this._iconClass;
-  }
-
-  set iconClass(value: string | undefined) {
-    this._iconClass = value;
-    this._icon = undefined;
     this._updateIcon();
   }
 
@@ -118,7 +106,8 @@ export default class ContextMenuItem extends EventTarget {
     button.setAttribute("aria-disabled", String(this._disabled));
 
     const iconEl = document.createElement("span");
-    iconEl.className = "context-menu-icon";
+    this._iconEl = iconEl;
+    this._updateIcon();
 
     const labelEl = document.createElement("span");
     labelEl.className = "context-menu-label";
@@ -148,27 +137,16 @@ export default class ContextMenuItem extends EventTarget {
 
     this._liEl = li;
     this._buttonEl = button;
-    this._iconEl = iconEl;
     this._labelEl = labelEl;
-
-    this._updateIcon();
   }
 
   private _updateIcon(): void {
     if (!this._iconEl) return;
 
-    this._iconEl.innerHTML = "";
-    this._iconEl.className = "context-menu-icon";
-
-    if (this._icon) {
-      this._iconEl.innerHTML = this._icon;
-      this._iconEl.style.display = "";
-    } else if (this._iconClass) {
-      this._iconEl.className += ` ${this._iconClass}`;
-      this._iconEl.style.display = "";
-    } else {
-      this._iconEl.style.display = "none";
-    }
+    this._iconEl.className = this._icon
+      ? `${ContextMenuItem.BASE_ICON_CLASS} ${this._icon}`
+      : ContextMenuItem.BASE_ICON_CLASS;
+    this._iconEl.style.display = this._icon ? "" : "none";
   }
 
   remove(): this {
