@@ -30,9 +30,8 @@ map.on("load", () => {
   });
 
   centerMapItem.addEventListener("click", ({ map, lngLat }) => {
-    map.flyTo({
-      center: [lngLat.lng, lngLat.lat],
-      zoom: map.getZoom()
+    map.easeTo({
+      center: [lngLat.lng, lngLat.lat]
     });
   });
 
