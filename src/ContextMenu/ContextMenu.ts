@@ -27,6 +27,16 @@ export default class ContextMenu {
     return this;
   }
 
+  insertItem(index: number, item: ContextMenuItem): this {
+    this._items.splice(index, 0, item);
+    const handler = () => {
+      this.hide();
+    };
+    item.addEventListener("click", handler);
+    this._itemClickHandlers.set(item, handler);
+    return this;
+  }
+
   removeItem(item: ContextMenuItem): this {
     const index = this._items.indexOf(item);
     if (index !== -1) {
