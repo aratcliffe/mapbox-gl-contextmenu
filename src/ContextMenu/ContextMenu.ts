@@ -1,5 +1,4 @@
-import ContextMenuItem from "../ContextMenuItem";
-import { ContextMenuContext } from "../types";
+import { ContextMenuContext, MenuItem } from "../types";
 import styles from "./ContextMenu.module.css";
 
 export interface ContextMenuOptions {
@@ -7,41 +6,30 @@ export interface ContextMenuOptions {
 }
 
 export default class ContextMenu {
-  private _items: ContextMenuItem[] = [];
+  private _items: MenuItem[] = [];
   private _className: string;
-  private _itemClickHandlers = new Map<ContextMenuItem, () => void>();
   private _menuEl: HTMLMenuElement | null = null;
   private _container: HTMLElement | null = null;
+  private _menuClickHandler: ((ev: MouseEvent) => void) | null = null;
 
   constructor(options?: ContextMenuOptions) {
     this._className = options?.className ?? styles.menu;
   }
 
-  addItem(item: ContextMenuItem): this {
+  addItem(item: MenuItem): this {
     this._items.push(item);
-    const handler = () => {
-      this.hide();
-    };
-    item.addEventListener("click", handler);
-    this._itemClickHandlers.set(item, handler);
     return this;
   }
 
-  insertItem(index: number, item: ContextMenuItem): this {
+  insertItem(index: number, item: MenuItem): this {
     this._items.splice(index, 0, item);
-    const handler = () => {
-      this.hide();
-    };
-    item.addEventListener("click", handler);
-    this._itemClickHandlers.set(item, handler);
     return this;
   }
 
-  removeItem(item: ContextMenuItem): this {
+  removeItem(item: MenuItem): this {
     const index = this._items.indexOf(item);
     if (index !== -1) {
       this._items.splice(index, 1);
-      this._removeItemEventListener(item);
       item.remove();
     }
     return this;
@@ -76,6 +64,12 @@ export default class ContextMenu {
 
   remove(): this {
     this._removeItems();
+
+    if (this._menuEl && this._menuClickHandler) {
+      this._menuEl.removeEventListener("click", this._menuClickHandler);
+      this._menuClickHandler = null;
+    }
+
     this._menuEl?.remove();
 
     this._menuEl = null;
@@ -91,6 +85,11 @@ export default class ContextMenu {
     menu.setAttribute("role", "menu");
     menu.style.position = "absolute";
 
+    this._menuClickHandler = () => {
+      this.hide();
+    };
+    menu.addEventListener("click", this._menuClickHandler);
+
     this._container.appendChild(menu);
 
     this._menuEl = menu;
@@ -98,19 +97,9 @@ export default class ContextMenu {
 
   private _removeItems(): void {
     this._items.forEach((item) => {
-      this._removeItemEventListener(item);
       item.remove();
     });
     this._items = [];
-    this._itemClickHandlers.clear();
-  }
-
-  private _removeItemEventListener(item: ContextMenuItem): void {
-    const handler = this._itemClickHandlers.get(item);
-    if (handler) {
-      item.removeEventListener("click", handler);
-      this._itemClickHandlers.delete(item);
-    }
   }
 
   private _positionInViewport(

@@ -1,5 +1,9 @@
 import mapboxgl from "mapbox-gl";
-import { MapboxContextMenu, ContextMenuItem } from "../src/index";
+import {
+  MapboxContextMenu,
+  ContextMenuItem,
+  ContextMenuSeparator
+} from "../src/index";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -24,6 +28,9 @@ map.on("load", () => {
   });
 
   contextMenu.addItem(showCoordinatesItem);
+
+  const separator = new ContextMenuSeparator();
+  contextMenu.addItem(separator);
 
   const centerMapItem = new ContextMenuItem({
     label: "Center map here"

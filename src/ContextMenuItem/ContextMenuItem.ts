@@ -122,7 +122,6 @@ export default class ContextMenuItem extends EventTarget {
     labelEl.textContent = this._label;
 
     this._clickHandler = (ev: MouseEvent) => {
-      ev.stopPropagation();
       ev.preventDefault();
 
       if (!this._disabled && this._currentCtx) {
