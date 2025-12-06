@@ -3,13 +3,11 @@ import { Evented } from "../util/evented";
 import { createElement } from "../util/dom";
 import styles from "./ContextMenuItem.module.scss";
 
-interface ContextMenuItemEventRegistry
-  extends Record<string, ContextMenuItemEventData | void> {
+interface ContextMenuItemEvents extends Record<string, unknown> {
   click: ContextMenuItemEventData;
 }
 
 export interface ContextMenuItemOptions {
-  id?: string;
   className?: string;
   buttonClassName?: string;
   label: string;
@@ -18,10 +16,7 @@ export interface ContextMenuItemOptions {
   disabled?: boolean;
 }
 
-let nextId = 0;
-
-export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistry> {
-  public readonly id: string;
+export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   private _className: string;
   private _buttonClassName: string;
   private _label: string;
@@ -40,7 +35,6 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEventRegistr
 
   constructor(options: ContextMenuItemOptions) {
     super();
-    this.id = options.id ?? `menu-item-${nextId++}`;
     this._className = options.className ?? styles.menuItem;
     this._buttonClassName = options.buttonClassName ?? styles.button;
     this._label = options.label;

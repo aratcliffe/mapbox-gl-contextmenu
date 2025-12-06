@@ -3,19 +3,14 @@ import { createElement } from "../util/dom";
 import styles from "./ContextMenuSeparator.module.scss";
 
 export interface ContextMenuSeparatorOptions {
-  id?: string;
   className?: string;
 }
 
-let nextId = 0;
-
 export default class ContextMenuSeparator {
-  public readonly id: string;
   private _className: string;
   private _liEl: HTMLElement | null = null;
 
   constructor(options?: ContextMenuSeparatorOptions) {
-    this.id = options?.id ?? `menu-separator-${nextId++}`;
     this._className = options?.className ?? styles.separator;
   }
 

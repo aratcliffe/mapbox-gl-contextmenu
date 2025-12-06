@@ -62,6 +62,7 @@ export default class ContextMenu {
   /**
    * Set a callback to be invoked when ArrowLeft is pressed.
    * Used by submenus to return focus to parent.
+   * @internal
    */
   set onEscapeLeft(callback: (() => void) | null) {
     this._onEscapeLeft = callback;
