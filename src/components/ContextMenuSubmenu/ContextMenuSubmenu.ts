@@ -136,15 +136,8 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
     return liEl;
   }
 
-  focus(): void {
-    super.focus();
-  }
-
-  blur(): void {
-    super.blur();
-    // Don't close submenu here - it stays open based on its own state
-    // and is closed by mouseleave or when another item is focused
-  }
+  // Note: blur() intentionally doesn't close the submenu - it stays open
+  // based on its own state and is closed by mouseleave or when another item is focused
 
   remove(): this {
     this._removeEventListeners();
@@ -291,7 +284,8 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
     let y = liRect.top - containerRect.top;
 
     // Show submenu first so items are rendered and we can measure
-    this._submenu.show(x, y, this._currentCtx);
+    // Don't focus the submenu - focus stays on parent menu item
+    this._submenu.show(x, y, this._currentCtx, { focusMenu: false });
 
     const submenuEl = this._submenu.menuElement;
     if (submenuEl) {
@@ -321,7 +315,7 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
       }
 
       // Reposition with correct coordinates
-      this._submenu.show(x, y, this._currentCtx);
+      this._submenu.show(x, y, this._currentCtx, { focusMenu: false });
     }
 
     // Show submenu item as active while child menu is open

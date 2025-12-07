@@ -168,9 +168,18 @@ export default class ContextMenu {
    * @param x - The x coordinate (in pixels) relative to the container.
    * @param y - The y coordinate (in pixels) relative to the container.
    * @param context - The context object containing the map, `contextmenu` event, and optional menu configuration.
+   * @param options - Optional settings for showing the menu.
+   * @param options.focusMenu - Whether to focus the menu element. Defaults to true.
    */
-  show(x: number, y: number, context: ContextMenuContext): void {
+  show(
+    x: number,
+    y: number,
+    context: ContextMenuContext,
+    options?: { focusMenu?: boolean }
+  ): void {
     if (!this._menuEl) return;
+
+    const { focusMenu = true } = options ?? {};
 
     this._items.forEach((item) => {
       item.render(this._menuEl!, context);
@@ -185,13 +194,18 @@ export default class ContextMenu {
 
     this._focusedIndex = -1;
 
-    this._handlers.keydown = this._handleKeydown.bind(this) as EventListener;
-    document.addEventListener("keydown", this._handlers.keydown);
+    // Only register keydown handler if not already registered
+    if (!this._handlers.keydown) {
+      this._handlers.keydown = this._handleKeydown.bind(this) as EventListener;
+      document.addEventListener("keydown", this._handlers.keydown);
+    }
 
-    this._menuEl.focus();
+    if (focusMenu) {
+      this._menuEl.focus();
 
-    // Check if mouse is already over a menu item (menu appeared under cursor)
-    this._focusItemUnderMouse();
+      // Check if mouse is already over a menu item (menu appeared under cursor)
+      this._focusItemUnderMouse();
+    }
   }
 
   /**
