@@ -17,8 +17,8 @@ export interface ContextMenuItemOptions {
   buttonClassName?: string;
   /** The text label to display. */
   label: string;
-  /** CSS class name(s) for the icon (e.g., "fa-solid fa-location-dot"). */
-  icon?: string;
+  /** Icon for the menu item. Can be CSS class name(s) (e.g., "fa-solid fa-location-dot") or an HTMLElement. If an HTMLElement is provided, it will be moved into the menu item. */
+  icon?: string | HTMLElement;
   /** Position of the icon relative to the label. Defaults to "before". */
   iconPosition?: "before" | "after";
   /** Whether the menu item is disabled. Defaults to `false`. */
@@ -50,7 +50,7 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   private _className: string;
   private _buttonClassName: string;
   private _label: string;
-  private _icon: string | undefined;
+  private _icon: string | HTMLElement | undefined;
   private _iconPosition: "before" | "after";
   protected _disabled: boolean;
 
@@ -67,7 +67,7 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
    * Creates a new context menu item.
    * @param options - Configuration options for the menu item.
    * @param options.label - The text label to display.
-   * @param options.icon - CSS class name(s) for the icon (e.g., "fa-solid fa-location-dot").
+   * @param options.icon - Icon for the menu item. Can be CSS class name(s) (e.g., "fa-solid fa-location-dot") or an HTMLElement.
    * @param options.iconPosition - Position of the icon relative to the label. Defaults to "before".
    * @param options.disabled - Whether the menu item is disabled. Defaults to `false`.
    * @param options.className - Custom CSS class name for the `<li>` element.
@@ -104,18 +104,18 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   }
 
   /**
-   * Gets the CSS class name(s) for the icon.
-   * @returns The icon CSS class(es), or `undefined` if no icon is set.
+   * Gets the icon for the menu item.
+   * @returns The icon CSS class(es) or HTMLElement, or `undefined` if no icon is set.
    */
-  get icon(): string | undefined {
+  get icon(): string | HTMLElement | undefined {
     return this._icon;
   }
 
   /**
-   * Sets the CSS class name(s) for the icon.
-   * @param value - The CSS class name(s) for the icon (e.g., "fa-solid fa-location-dot"), or undefined to remove the icon.
+   * Sets the icon for the menu item.
+   * @param value - CSS class name(s) (e.g., "fa-solid fa-location-dot"), an HTMLElement, or undefined to remove the icon.
    */
-  set icon(value: string | undefined) {
+  set icon(value: string | HTMLElement | undefined) {
     this._icon = value;
     this._updateIcon();
   }
@@ -250,10 +250,21 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   private _updateIcon(): void {
     if (!this._iconEl) return;
 
-    this._iconEl.className = this._icon
-      ? `${styles.icon} ${this._icon}`
-      : styles.icon;
-    this._iconEl.style.display = this._icon ? "" : "none";
+    this._iconEl.innerHTML = "";
+    this._iconEl.className = styles.icon;
+
+    if (!this._icon) {
+      this._iconEl.style.display = "none";
+      return;
+    }
+
+    this._iconEl.style.display = "";
+
+    if (typeof this._icon === "string") {
+      this._iconEl.className = `${styles.icon} ${this._icon}`;
+    } else {
+      this._iconEl.appendChild(this._icon);
+    }
   }
 
   protected _addEventListeners(): void {
