@@ -7,6 +7,9 @@ import styles from "./ContextMenuSubmenu.module.scss";
 import itemStyles from "../ContextMenuItem/ContextMenuItem.module.scss";
 import chevronSvg from "../../icons/chevron-right.svg?raw";
 
+/** Horizontal overlap between submenu and parent menu item (in pixels) */
+const SUBMENU_OVERLAP = 4;
+
 /**
  * Configuration options for creating a context menu submenu.
  * Extends {@link ContextMenuItemOptions} with submenu-specific timing options.
@@ -283,15 +286,23 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
     const liRect = this._liEl!.getBoundingClientRect();
     const containerRect = this._submenuContainer.getBoundingClientRect();
 
-    // Position to the right of the menu item, with slight overlap
-    let x = liRect.right - containerRect.left - 4;
+    // Initial position to the right of the menu item
+    let x = liRect.right - containerRect.left - SUBMENU_OVERLAP;
     let y = liRect.top - containerRect.top;
 
-    // Get actual submenu dimensions (need to show it first to measure)
+    // Show submenu first so items are rendered and we can measure
     this._submenu.show(x, y, this._currentCtx);
 
     const submenuEl = this._submenu.menuElement;
     if (submenuEl) {
+      // Get the first item's top padding to align submenu item with parent item
+      const firstChild = submenuEl.firstElementChild as HTMLElement | null;
+      const firstChildPaddingTop = firstChild
+        ? parseFloat(getComputedStyle(firstChild).paddingTop)
+        : 0;
+
+      y -= firstChildPaddingTop;
+
       const submenuWidth = submenuEl.offsetWidth;
       const submenuHeight = submenuEl.offsetHeight;
 
@@ -320,7 +331,10 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
     if (submenuEl && !this._handlers.submenuMouseleave) {
       this._handlers.submenuMouseleave =
         this._handleSubmenuMouseleave.bind(this);
-      submenuEl.addEventListener("mouseleave", this._handlers.submenuMouseleave);
+      submenuEl.addEventListener(
+        "mouseleave",
+        this._handlers.submenuMouseleave
+      );
     }
   }
 
