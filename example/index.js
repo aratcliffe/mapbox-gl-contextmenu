@@ -10,7 +10,6 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const map = new mapboxgl.Map({
   container: "map",
-  style: "mapbox://styles/mapbox/streets-v12",
   center: [-122.4194, 37.7749],
   zoom: 12
 });
