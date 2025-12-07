@@ -7,8 +7,8 @@ export type { ContextMenuItemOptions } from "./ContextMenuItem/ContextMenuItem";
 export { default as ContextMenuSeparator } from "./ContextMenuSeparator";
 export type { ContextMenuSeparatorOptions } from "./ContextMenuSeparator";
 
-export { default as ContextMenuSub } from "./ContextMenuSub";
-export type { ContextMenuSubOptions } from "./ContextMenuSub";
+export { default as ContextMenuSubmenu } from "./ContextMenuSubmenu";
+export type { ContextMenuSubmenuOptions } from "./ContextMenuSubmenu";
 
 export type {
   ContextMenuContext,
@@ -16,4 +16,3 @@ export type {
   Focusable,
   MenuItem
 } from "./types";
-export { isFocusable } from "./util/focusable";

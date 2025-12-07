@@ -2,6 +2,9 @@ import type { ContextMenuContext } from "../types";
 import { createElement } from "../util/dom";
 import styles from "./ContextMenuSeparator.module.scss";
 
+/**
+ * Configuration options for creating a context menu separator.
+ */
 export interface ContextMenuSeparatorOptions {
   /** Custom CSS class name for the separator element. */
   className?: string;

@@ -7,6 +7,9 @@ interface ContextMenuItemEvents extends Record<string, unknown> {
   click: ContextMenuItemEventData;
 }
 
+/**
+ * Configuration options for creating a context menu item.
+ */
 export interface ContextMenuItemOptions {
   /** Custom CSS class name for the menu item's `<li>` element. */
   className?: string;

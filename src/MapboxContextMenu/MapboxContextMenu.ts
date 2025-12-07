@@ -2,6 +2,10 @@ import type { Map as MapboxMap, MapMouseEvent } from "mapbox-gl";
 import { ContextMenuContext } from "../types";
 import { ContextMenu, ContextMenuOptions } from "../ContextMenu";
 
+/**
+ * Configuration options for creating a Mapbox context menu.
+ * Extends {@link ContextMenuOptions}.
+ */
 export interface MapboxContextMenuOptions extends ContextMenuOptions {}
 
 /**

@@ -1,5 +1,8 @@
 import type { Focusable, MenuItem } from "../types";
 
+/**
+ * @internal
+ */
 export function isFocusable(item: MenuItem): item is MenuItem & Focusable {
   return (
     "focus" in item &&

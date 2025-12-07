@@ -1,7 +1,7 @@
 import type { Map, MapMouseEvent } from "mapbox-gl";
 import type ContextMenuItem from "./ContextMenuItem";
 import type ContextMenuSeparator from "./ContextMenuSeparator";
-import type ContextMenuSub from "./ContextMenuSub";
+import type ContextMenuSubmenu from "./ContextMenuSubmenu";
 import type { ContextMenuTheme } from "./ContextMenu/ContextMenu";
 
 /**
@@ -49,4 +49,4 @@ export interface Focusable {
   click(): void;
 }
 
-export type MenuItem = ContextMenuItem | ContextMenuSeparator | ContextMenuSub;
+export type MenuItem = ContextMenuItem | ContextMenuSeparator | ContextMenuSubmenu;

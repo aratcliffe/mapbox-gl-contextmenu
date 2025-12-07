@@ -1,6 +1,6 @@
 import { ContextMenuContext, MenuItem } from "../types";
 import { isFocusable } from "../util/focusable";
-import ContextMenuSub from "../ContextMenuSub/ContextMenuSub";
+import ContextMenuSubmenu from "../ContextMenuSubmenu/ContextMenuSubmenu";
 import { createElement } from "../util/dom";
 import styles from "./ContextMenu.module.scss";
 
@@ -220,7 +220,7 @@ export default class ContextMenu {
 
     // Close any open submenus
     this._items.forEach((item) => {
-      if (item instanceof ContextMenuSub) {
+      if (item instanceof ContextMenuSubmenu) {
         item.blur();
       }
     });
@@ -299,7 +299,7 @@ export default class ContextMenu {
       case "ArrowRight":
         if (this._focusedIndex !== -1) {
           const item = this._items[this._focusedIndex];
-          if (item instanceof ContextMenuSub) {
+          if (item instanceof ContextMenuSubmenu) {
             item.openAndFocusSubmenu();
             ev.preventDefault();
             return;
@@ -312,7 +312,7 @@ export default class ContextMenu {
         if (this._focusedIndex !== -1) {
           const item = this._items[this._focusedIndex];
           // For submenus, open and focus instead of clicking
-          if (item instanceof ContextMenuSub) {
+          if (item instanceof ContextMenuSubmenu) {
             item.openAndFocusSubmenu();
             ev.preventDefault();
             return;

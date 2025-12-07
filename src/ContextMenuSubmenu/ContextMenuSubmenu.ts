@@ -3,11 +3,20 @@ import ContextMenuItem, {
   type ContextMenuItemOptions
 } from "../ContextMenuItem/ContextMenuItem";
 import ContextMenu from "../ContextMenu/ContextMenu";
-import styles from "./ContextMenuSub.module.scss";
+import styles from "./ContextMenuSubmenu.module.scss";
 import itemStyles from "../ContextMenuItem/ContextMenuItem.module.scss";
 import chevronSvg from "../icons/chevron-right.svg?raw";
 
-export interface ContextMenuSubOptions extends ContextMenuItemOptions {}
+/**
+ * Configuration options for creating a context menu submenu.
+ * Extends {@link ContextMenuItemOptions} with submenu-specific timing options.
+ */
+export interface ContextMenuSubmenuOptions extends ContextMenuItemOptions {
+  /** Delay in milliseconds before showing the submenu on hover. Defaults to 300. */
+  showDelay?: number;
+  /** Delay in milliseconds before hiding the submenu when mouse leaves. Defaults to 200. */
+  hideDelay?: number;
+}
 
 /**
  * A context menu item that displays a submenu when hovered or clicked.
@@ -19,7 +28,7 @@ export interface ContextMenuSubOptions extends ContextMenuItemOptions {}
  *
  * @example
  * ```ts
- * const directionsSubmenu = new ContextMenuSub({
+ * const directionsSubmenu = new ContextMenuSubmenu({
  *   label: "Get directions",
  *   icon: "fa-solid fa-route"
  * });
@@ -36,12 +45,14 @@ export interface ContextMenuSubOptions extends ContextMenuItemOptions {}
  * menu.addItem(directionsSubmenu);
  * ```
  */
-export default class ContextMenuSub extends ContextMenuItem {
+export default class ContextMenuSubmenu extends ContextMenuItem {
   private _submenu: ContextMenu;
   private _chevronEl: SVGElement | null = null;
   private _hoverTimeout: number | null = null;
   private _submenuContainer: HTMLElement | null = null;
   private _isPinned: boolean = false;
+  private _showDelay: number;
+  private _hideDelay: number;
 
   private _handlers = {
     mouseenter: null as (() => void) | null,
@@ -59,10 +70,14 @@ export default class ContextMenuSub extends ContextMenuItem {
    * @param options.disabled - Whether the submenu item is disabled. Defaults to `false`.
    * @param options.className - Custom CSS class name for the `<li>` element.
    * @param options.buttonClassName - Custom CSS class name for the `<button>` element.
+   * @param options.showDelay - Delay in milliseconds before showing the submenu on hover. Defaults to 300.
+   * @param options.hideDelay - Delay in milliseconds before hiding the submenu when mouse leaves. Defaults to 200.
    */
-  constructor(options: ContextMenuSubOptions) {
+  constructor(options: ContextMenuSubmenuOptions) {
     super(options);
     this._submenu = new ContextMenu();
+    this._showDelay = options.showDelay ?? 300;
+    this._hideDelay = options.hideDelay ?? 200;
   }
 
   /**
@@ -184,7 +199,7 @@ export default class ContextMenuSub extends ContextMenuItem {
         if (!this._isHovering() && !this._isPinned) {
           this._closeSubmenu();
         }
-      }, 200);
+      }, this._hideDelay);
     };
 
     // Unified click handler for submenu toggling (doesn't fire "click" event)
@@ -243,7 +258,7 @@ export default class ContextMenuSub extends ContextMenuItem {
     this._cancelOpen();
     this._hoverTimeout = window.setTimeout(() => {
       this._openSubmenu();
-    }, 300); // 300ms delay
+    }, this._showDelay);
   }
 
   private _cancelOpen(): void {
@@ -264,7 +279,7 @@ export default class ContextMenuSub extends ContextMenuItem {
 
     // Prevent nested submenus - check if any item in submenu is also a submenu
     const hasNestedSubmenu = this._submenu.items.some(
-      (item) => item instanceof ContextMenuSub
+      (item) => item instanceof ContextMenuSubmenu
     );
     if (hasNestedSubmenu) {
       return; // Don't allow nested submenus
