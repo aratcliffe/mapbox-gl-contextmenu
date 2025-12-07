@@ -8,11 +8,29 @@ A context menu plugin for Mapbox GL JS and MapLibre GL JS.
 
 ## Installation
 
+### npm
+
 ```bash
 npm install mapbox-gl-contextmenu
 ```
 
+### CDN
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/mapbox-gl-contextmenu@1/dist/style.css">
+<script src="https://unpkg.com/mapbox-gl-contextmenu@1/dist/index.umd.js"></script>
+```
+
+Or using jsDelivr:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mapbox-gl-contextmenu@1/dist/style.css">
+<script src="https://cdn.jsdelivr.net/npm/mapbox-gl-contextmenu@1/dist/index.umd.js"></script>
+```
+
 ## Usage
+
+### ES Modules
 
 ```ts
 import mapboxgl from "mapbox-gl";
@@ -35,6 +53,30 @@ centerItem.on("click", ({ map, lngLat }) => {
 
 menu.addItem(centerItem);
 menu.addTo(map);
+```
+
+### Script Tag
+
+When using the UMD build via a script tag, the library is available on the `mapboxgl` global object:
+
+```html
+<script>
+  const { MapboxContextMenu, ContextMenuItem } = mapboxgl;
+
+  const menu = new MapboxContextMenu({ theme: "auto", width: 180 });
+
+  const centerItem = new ContextMenuItem({
+    label: "Center map here",
+    icon: "fa-solid fa-crosshairs"
+  });
+
+  centerItem.on("click", ({ map, lngLat }) => {
+    map.flyTo({ center: [lngLat.lng, lngLat.lat] });
+  });
+
+  menu.addItem(centerItem);
+  menu.addTo(map);
+</script>
 ```
 
 ## API
