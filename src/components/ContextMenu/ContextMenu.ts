@@ -24,6 +24,7 @@ export default class ContextMenu {
   private _container: HTMLElement | null = null;
 
   private _menuClickHandler: ((ev: MouseEvent) => void) | null = null;
+  private _menuFocusinHandler: ((ev: FocusEvent) => void) | null = null;
 
   private _focusedIndex: number = -1;
   private _keyHandler: ((ev: KeyboardEvent) => void) | null = null;
@@ -156,9 +157,15 @@ export default class ContextMenu {
   remove(): this {
     this._removeItems();
 
-    if (this._menuEl && this._menuClickHandler) {
-      this._menuEl.removeEventListener("click", this._menuClickHandler);
-      this._menuClickHandler = null;
+    if (this._menuEl) {
+      if (this._menuClickHandler) {
+        this._menuEl.removeEventListener("click", this._menuClickHandler);
+        this._menuClickHandler = null;
+      }
+      if (this._menuFocusinHandler) {
+        this._menuEl.removeEventListener("focusin", this._menuFocusinHandler);
+        this._menuFocusinHandler = null;
+      }
     }
 
     this._menuEl?.remove();
@@ -367,6 +374,30 @@ export default class ContextMenu {
       this.hide();
     };
     menu.addEventListener("click", this._menuClickHandler);
+
+    this._menuFocusinHandler = (ev: FocusEvent) => {
+      const target = ev.target as HTMLElement;
+      const li = target.closest("li");
+      if (li) {
+        const index = this._items.findIndex((item) => {
+          if ("_liEl" in item) {
+            return (item as unknown as { _liEl: HTMLElement | null })._liEl === li;
+          }
+          return false;
+        });
+        if (index !== -1 && index !== this._focusedIndex) {
+          // Blur previous item without calling focus on new (it's already focused)
+          if (this._focusedIndex !== -1 && this._items[this._focusedIndex]) {
+            const prevItem = this._items[this._focusedIndex];
+            if (isFocusable(prevItem)) {
+              prevItem.blur();
+            }
+          }
+          this._focusedIndex = index;
+        }
+      }
+    };
+    menu.addEventListener("focusin", this._menuFocusinHandler);
 
     this._container.appendChild(menu);
 

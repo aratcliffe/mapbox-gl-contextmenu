@@ -62,6 +62,7 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   protected _currentCtx: ContextMenuContext | null = null;
 
   private _clickHandler: ((ev: MouseEvent) => void) | null = null;
+  private _mouseenterHandler: (() => void) | null = null;
 
   /**
    * Creates a new context menu item.
@@ -285,13 +286,26 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
       }
     };
 
+    this._mouseenterHandler = () => {
+      if (!this._disabled) {
+        this.focus();
+      }
+    };
+
     this._buttonEl.addEventListener("click", this._clickHandler);
+    this._buttonEl.addEventListener("mouseenter", this._mouseenterHandler);
   }
 
   protected _removeEventListeners(): void {
-    if (this._buttonEl && this._clickHandler) {
-      this._buttonEl.removeEventListener("click", this._clickHandler);
-      this._clickHandler = null;
+    if (this._buttonEl) {
+      if (this._clickHandler) {
+        this._buttonEl.removeEventListener("click", this._clickHandler);
+        this._clickHandler = null;
+      }
+      if (this._mouseenterHandler) {
+        this._buttonEl.removeEventListener("mouseenter", this._mouseenterHandler);
+        this._mouseenterHandler = null;
+      }
     }
   }
 }

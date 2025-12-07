@@ -1,7 +1,15 @@
 .menuItem {
   box-sizing: border-box;
   list-style: none;
-  padding: 4px;
+  padding: 2px 4px;
+
+  &:first-child {
+    padding-top: 4px;
+  }
+
+  &:last-child {
+    padding-bottom: 4px;
+  }
 }
 
 .button {
@@ -22,7 +30,6 @@
   outline: none;
   user-select: none;
 
-  &:hover:not(:disabled):not(.focusedParent),
   &.focused:not(:disabled):not(.focusedParent) {
     background-color: var(--context-menu-item-hover-bg);
   }
