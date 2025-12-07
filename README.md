@@ -57,7 +57,7 @@ menu.addTo(map);
 
 ### Script Tag
 
-When using the UMD build via a script tag, the library is available on the `mapboxgl` global object:
+When using the UMD build via a script tag, the library extends the `mapboxgl` global object:
 
 ```html
 <script>

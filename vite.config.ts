@@ -31,7 +31,8 @@ export default defineConfig(({ command }) => {
           output: {
             globals: {
               "mapbox-gl": "mapboxgl"
-            }
+            },
+            extend: true
           }
         }
       }

@@ -1,12 +1,12 @@
-import mapboxgl from "mapbox-gl";
-import {
+const {
   MapboxContextMenu,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuSubmenu
-} from "../src/index";
+} = mapboxgl;
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+// Set your Mapbox access token here
+mapboxgl.accessToken = "YOUR_MAPBOX_ACCESS_TOKEN";
 
 const map = new mapboxgl.Map({
   container: "map",
