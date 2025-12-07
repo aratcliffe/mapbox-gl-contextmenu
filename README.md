@@ -15,19 +15,21 @@ npm install mapbox-gl-contextmenu
 ## Usage
 
 ```ts
-import { MapboxContextMenu, ContextMenuItem, ContextMenuSeparator, ContextMenuSubmenu } from 'mapbox-gl-contextmenu';
-import 'mapbox-gl-contextmenu/dist/style.css';
+import mapboxgl from "mapbox-gl";
+import { MapboxContextMenu, ContextMenuItem } from "mapbox-gl-contextmenu";
 
-const map = new mapboxgl.Map({ /* ... */ });
-
-const menu = new MapboxContextMenu({ theme: 'auto', width: 180 });
-
-const centerItem = new ContextMenuItem({
-  label: 'Center map here',
-  icon: 'fa-solid fa-crosshairs'
+const map = new mapboxgl.Map({
+  /* ... */
 });
 
-centerItem.on('click', ({ map, lngLat }) => {
+const menu = new MapboxContextMenu({ theme: "auto", width: 180 });
+
+const centerItem = new ContextMenuItem({
+  label: "Center map here",
+  icon: "fa-solid fa-crosshairs"
+});
+
+centerItem.on("click", ({ map, lngLat }) => {
   map.flyTo({ center: [lngLat.lng, lngLat.lat] });
 });
 
@@ -67,11 +69,11 @@ A clickable menu item with an optional icon.
 
 ```ts
 const item = new ContextMenuItem({
-  label: 'Copy coordinates',
-  icon: 'fa-solid fa-copy'
+  label: "Copy coordinates",
+  icon: "fa-solid fa-copy"
 });
 
-item.on('click', ({ lngLat, map, point, features }) => {
+item.on("click", ({ lngLat, map, point, features }) => {
   // Handle click
 });
 ```
@@ -101,12 +103,12 @@ A menu item that displays a nested submenu on hover or click.
 
 ```ts
 const submenu = new ContextMenuSubmenu({
-  label: 'More options',
-  icon: 'fa-solid fa-ellipsis'
+  label: "More options",
+  icon: "fa-solid fa-ellipsis"
 });
 
-submenu.addItem(new ContextMenuItem({ label: 'Option A' }));
-submenu.addItem(new ContextMenuItem({ label: 'Option B' }));
+submenu.addItem(new ContextMenuItem({ label: "Option A" }));
+submenu.addItem(new ContextMenuItem({ label: "Option B" }));
 ```
 
 **Options:**
@@ -126,9 +128,9 @@ submenu.addItem(new ContextMenuItem({ label: 'Option B' }));
 A horizontal line for visually grouping menu items.
 
 ```ts
-menu.addItem(new ContextMenuItem({ label: 'Edit' }));
+menu.addItem(new ContextMenuItem({ label: "Edit" }));
 menu.addItem(new ContextMenuSeparator());
-menu.addItem(new ContextMenuItem({ label: 'Delete' }));
+menu.addItem(new ContextMenuItem({ label: "Delete" }));
 ```
 
 **Options:**
