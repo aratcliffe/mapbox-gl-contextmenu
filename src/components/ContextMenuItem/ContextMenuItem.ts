@@ -226,7 +226,7 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
     this._updateIcon();
 
     const labelEl = createElement("span", {
-      class: "context-menu-label"
+      class: styles.contextMenuLabel
     });
     labelEl.textContent = this._label;
 
