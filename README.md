@@ -3,7 +3,7 @@
 A context menu plugin for Mapbox GL JS and MapLibre GL JS.
 
 <p align="center">
-  <img src="assets/screenshot.png" width="600" alt="Context menu example showing menu items and submenu">
+  <img src="assets/screenshot.png" width="800" alt="Context menu example showing menu items and submenu">
 </p>
 
 ## Installation
