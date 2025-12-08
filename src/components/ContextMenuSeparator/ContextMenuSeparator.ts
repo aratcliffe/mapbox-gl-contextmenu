@@ -31,7 +31,9 @@ export default class ContextMenuSeparator {
    * @param options.className - Custom CSS class name for the separator element.
    */
   constructor(options?: ContextMenuSeparatorOptions) {
-    this._className = options?.className ?? styles.separator;
+    this._className = options?.className
+      ? `${styles.separator} ${options.className}`
+      : styles.separator;
   }
 
   /**

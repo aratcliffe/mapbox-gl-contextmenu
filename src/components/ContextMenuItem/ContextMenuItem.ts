@@ -75,8 +75,12 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
    */
   constructor(options: ContextMenuItemOptions) {
     super();
-    this._className = options.className ?? styles.menuItem;
-    this._buttonClassName = options.buttonClassName ?? styles.button;
+    this._className = options.className
+      ? `${styles.menuItem} ${options.className}`
+      : styles.menuItem;
+    this._buttonClassName = options.buttonClassName
+      ? `${styles.button} ${options.buttonClassName}`
+      : styles.button;
     this._label = options.label;
     this._icon = options.icon;
     this._iconPosition = options.iconPosition ?? "before";

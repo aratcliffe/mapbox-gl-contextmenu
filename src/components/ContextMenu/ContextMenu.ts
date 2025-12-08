@@ -30,7 +30,9 @@ export default class ContextMenu {
   private _onEscapeLeft: (() => void) | null = null;
 
   constructor(options?: ContextMenuOptions) {
-    this._className = options?.className ?? styles.menu;
+    this._className = options?.className
+      ? `${styles.menu} ${options.className}`
+      : styles.menu;
     this._theme = options?.theme ?? "auto";
     this._width = options?.width;
   }
