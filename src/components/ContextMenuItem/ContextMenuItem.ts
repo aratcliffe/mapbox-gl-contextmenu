@@ -179,7 +179,6 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
   blur(): void {
     if (this._buttonEl) {
       this._buttonEl.classList.remove(styles.focused);
-      (this._buttonEl as HTMLButtonElement).blur();
     }
   }
 
@@ -289,14 +288,7 @@ export default class ContextMenuItem extends Evented<ContextMenuItemEvents> {
       }
     }) as EventListener;
 
-    this._handlers.mouseenter = (() => {
-      if (!this._disabled) {
-        this.focus();
-      }
-    }) as EventListener;
-
     this._buttonEl.addEventListener("click", this._handlers.click);
-    this._buttonEl.addEventListener("mouseenter", this._handlers.mouseenter);
   }
 
   protected _removeEventListeners(): void {

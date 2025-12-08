@@ -119,7 +119,8 @@ export default class MapboxContextMenu extends ContextMenu {
         map: this._map!,
         event: e,
         menuWidth: this.width,
-        menuTheme: this._theme
+        menuTheme: this._theme,
+        menuClassName: this._className
       };
       this.show(e.point.x, e.point.y, ctx);
     };

@@ -17,7 +17,7 @@ export interface ContextMenuOptions {
 
 export default class ContextMenu {
   protected _items: MenuItem[] = [];
-  private _className: string;
+  protected _className: string;
   protected _theme: ContextMenuTheme;
   private _width: string | number | undefined;
   protected _menuEl: HTMLElement | null = null;
@@ -71,8 +71,15 @@ export default class ContextMenu {
     this._updateTheme();
   }
 
-  get menuElement(): HTMLElement | null {
-    return this._menuEl;
+  /**
+   * Sets the CSS class name for the menu element.
+   * @param value - The class name to apply. Will be combined with the base menu class.
+   */
+  set className(value: string) {
+    this._className = value;
+    if (this._menuEl) {
+      this._menuEl.className = value;
+    }
   }
 
   /**
@@ -90,6 +97,10 @@ export default class ContextMenu {
    */
   set onEscapeLeft(callback: (() => void) | null) {
     this._onEscapeLeft = callback;
+  }
+
+  get menuElement(): HTMLElement | null {
+    return this._menuEl;
   }
 
   /**
@@ -382,7 +393,14 @@ export default class ContextMenu {
     this._handlers.focusin = this._handleFocusin.bind(this) as EventListener;
     menu.addEventListener("focusin", this._handlers.focusin);
 
-    this._handlers.mouseleave = this._handleMouseleave.bind(this) as EventListener;
+    this._handlers.mouseover = this._handleMouseover.bind(
+      this
+    ) as EventListener;
+    menu.addEventListener("mouseover", this._handlers.mouseover);
+
+    this._handlers.mouseleave = this._handleMouseleave.bind(
+      this
+    ) as EventListener;
     menu.addEventListener("mouseleave", this._handlers.mouseleave);
 
     this._container.appendChild(menu);
@@ -456,6 +474,17 @@ export default class ContextMenu {
           }
         }
         this._focusedIndex = index;
+      }
+    }
+  }
+
+  private _handleMouseover(ev: MouseEvent): void {
+    const target = ev.target as HTMLElement;
+    const li = target.closest("li");
+    if (li) {
+      const index = this._findItemIndexByLiEl(li);
+      if (index !== -1 && index !== this._focusedIndex) {
+        this._focusItem(index);
       }
     }
   }

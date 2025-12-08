@@ -119,7 +119,7 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
     }
 
     if (!this._submenuContainer) {
-      const { map, menuWidth, menuTheme } = ctx;
+      const { map, menuWidth, menuTheme, menuClassName } = ctx;
 
       this._submenuContainer = map.getContainer();
       this._submenu.addTo(this._submenuContainer);
@@ -131,13 +131,14 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
       if (menuTheme !== undefined) {
         this._submenu.theme = menuTheme;
       }
+
+      if (menuClassName !== undefined) {
+        this._submenu.className = menuClassName;
+      }
     }
 
     return liEl;
   }
-
-  // Note: blur() intentionally doesn't close the submenu - it stays open
-  // based on its own state and is closed by mouseleave or when another item is focused
 
   remove(): this {
     this._removeEventListeners();
@@ -168,9 +169,6 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
   }
 
   private _handleMouseenter(): void {
-    if (!this._disabled) {
-      this.focus();
-    }
     this._scheduleOpen();
   }
 

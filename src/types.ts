@@ -17,6 +17,8 @@ export interface ContextMenuContext {
   menuWidth?: string | number;
   /** The configured menu theme, if set. */
   menuTheme?: ContextMenuTheme;
+  /** The custom CSS class name for the menu, if set. */
+  menuClassName?: string;
 }
 
 /**
