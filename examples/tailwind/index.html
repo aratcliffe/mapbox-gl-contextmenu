@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapbox GL ContextMenu - Tailwind/Material Example</title>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/mapbox-gl-contextmenu/dist/style.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /*
+       * This example demonstrates styling the context menu using:
+       * 1. CSS variable overrides (for colors)
+       * 2. Tailwind classes via the className properties on library components
+       */
+      /* Override CSS variables for focus/active states (can't be set via classes) */
+      [role="menu"] {
+        --context-menu-item-focus-bg: #c7d2fe;
+        --context-menu-item-active-bg: #e0e7ff;
+      }
+    </style>
+  </head>
+  <body class="m-0 p-0 font-sans overflow-hidden">
+    <div id="map" class="w-screen h-screen"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/mapbox-gl-contextmenu/dist/index.umd.js"></script>
+    <script>
+      // Replace with your Mapbox access token
+      mapboxgl.accessToken = "YOUR_MAPBOX_ACCESS_TOKEN";
+
+      const map = new mapboxgl.Map({
+        container: "map",
+        center: [-122.4194, 37.7749],
+        zoom: 12
+      });
+
+      // Tailwind classes for Material Design styling
+      const menuClassName =
+        "rounded-xl shadow-lg py-1 font-['Roboto',sans-serif]";
+      const buttonClassName =
+        "rounded-lg h-[40px] px-3.5 gap-2.5 text-gray-700 text-[15px]";
+      const separatorClassName = "h-px my-1 mx-2 bg-gray-200";
+      const iconClassName = "text-[16px]";
+
+      map.on("load", () => {
+        const contextMenu = new mapboxgl.MapboxContextMenu({
+          width: 200,
+          className: menuClassName
+        });
+
+        const showCoordinatesItem = new mapboxgl.ContextMenuItem({
+          label: "Copy coordinates",
+          icon: `fa-solid fa-location-dot ${iconClassName}`,
+          buttonClassName: buttonClassName
+        });
+
+        showCoordinatesItem.on("click", async ({ lngLat }) => {
+          const lng = lngLat.lng.toFixed(6);
+          const lat = lngLat.lat.toFixed(6);
+          const coordinates = `${lng}, ${lat}`;
+          await navigator.clipboard.writeText(coordinates);
+        });
+
+        contextMenu.addItem(showCoordinatesItem);
+
+        const centerMapItem = new mapboxgl.ContextMenuItem({
+          label: "Center map here",
+          icon: `fa-solid fa-crosshairs ${iconClassName}`,
+          buttonClassName: buttonClassName
+        });
+
+        centerMapItem.on("click", ({ map, lngLat }) => {
+          map.easeTo({
+            center: [lngLat.lng, lngLat.lat]
+          });
+        });
+
+        contextMenu.addItem(centerMapItem);
+
+        const separator = new mapboxgl.ContextMenuSeparator({
+          className: separatorClassName
+        });
+        contextMenu.addItem(separator);
+
+        const directionsSubmenu = new mapboxgl.ContextMenuSubmenu({
+          label: "Get directions",
+          icon: `fa-solid fa-route ${iconClassName}`,
+          buttonClassName: buttonClassName
+        });
+
+        const directionsToHere = new mapboxgl.ContextMenuItem({
+          label: "Directions to here",
+          buttonClassName: buttonClassName
+        });
+
+        const directionsFromHere = new mapboxgl.ContextMenuItem({
+          label: "Directions from here",
+          buttonClassName: buttonClassName
+        });
+
+        directionsSubmenu.addItem(directionsToHere);
+        directionsSubmenu.addItem(directionsFromHere);
+        contextMenu.addItem(directionsSubmenu);
+
+        contextMenu.addTo(map);
+      });
+    </script>
+  </body>
+</html>

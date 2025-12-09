@@ -40,7 +40,7 @@ export default defineConfig(({ command }) => {
   }
 
   return {
-    root: "example",
+    root: "examples/basic",
     envDir: resolve(__dirname, "."),
     css: {
       preprocessorOptions: {
