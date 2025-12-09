@@ -8,7 +8,7 @@ import itemStyles from "../ContextMenuItem/ContextMenuItem.module.scss";
 import chevronSvg from "../../icons/chevron-right.svg?raw";
 
 /** Horizontal overlap between submenu and parent menu item (in pixels) */
-const SUBMENU_OVERLAP = 2;
+const SUBMENU_OVERLAP = 6;
 
 /**
  * Configuration options for creating a context menu submenu.
@@ -71,7 +71,7 @@ export default class ContextMenuSubmenu extends ContextMenuItem {
    */
   constructor(options: ContextMenuSubmenuOptions) {
     super(options);
-    this._submenu = new ContextMenu();
+    this._submenu = new ContextMenu({ isSubmenu: true });
     this._showDelay = options.showDelay ?? 300;
     this._hideDelay = options.hideDelay ?? 200;
   }

@@ -1,7 +1,5 @@
 @mixin dark-mode-vars {
   --context-menu-bg: #141414;
-  --context-menu-shadow: 0 4px 26px -6px rgba(0, 0, 0, 0.4),
-    0 2px 12px -4px rgba(0, 0, 0, 0.2);
   --context-menu-item-text-color: white;
   --context-menu-item-focus-bg: #444444;
   --context-menu-item-active-bg: #2a2a2a;
@@ -14,8 +12,9 @@
   margin: 0;
   padding: 4px 0;
   background: var(--context-menu-bg);
-  border-radius: var(--context-menu-border-radius, 4px);
-  box-shadow: var(--context-menu-shadow);
+  border-radius: var(--context-menu-border-radius, 5px);
+  box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.25),
+    0 1px 4px -2px rgba(0, 0, 0, 0.12);
   min-width: var(--context-menu-min-width, 200px);
   opacity: 0;
   pointer-events: none;
@@ -25,8 +24,6 @@
   outline: none;
 
   --context-menu-bg: white;
-  --context-menu-shadow: 0 4px 26px -6px rgba(0, 0, 0, 0.25),
-    0 2px 12px -4px rgba(0, 0, 0, 0.12);
   --context-menu-item-font-size: 13px;
   --context-menu-item-text-color: black;
   --context-menu-item-focus-bg: #e8e8e8;
@@ -49,4 +46,9 @@
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
+}
+
+.submenu {
+  box-shadow: 0 3px 18px -5px rgba(0, 0, 0, 0.28),
+    0 2px 8px -3px rgba(0, 0, 0, 0.14);
 }
