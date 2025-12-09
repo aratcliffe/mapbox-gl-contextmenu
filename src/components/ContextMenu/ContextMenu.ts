@@ -1,5 +1,6 @@
 import { ContextMenuContext, MenuItem } from "../../types";
 import { isFocusable } from "../../util/focusable";
+import ContextMenuItem from "../ContextMenuItem/ContextMenuItem";
 import ContextMenuSubmenu from "../ContextMenuSubmenu/ContextMenuSubmenu";
 import { createElement } from "../../util/dom";
 import styles from "./ContextMenu.module.scss";
@@ -351,7 +352,7 @@ export default class ContextMenu {
             ev.preventDefault();
             return;
           }
-          if (isFocusable(item) && "listens" in item && item.listens("click")) {
+          if (item instanceof ContextMenuItem && item.listens("click")) {
             item.click();
             this.hide();
           }
@@ -378,8 +379,11 @@ export default class ContextMenu {
 
   private _isFocusable(
     item: MenuItem
-  ): item is MenuItem & { disabled: boolean; focus(): void } {
-    return isFocusable(item) && !item.disabled;
+  ): item is ContextMenuItem | ContextMenuSubmenu {
+    return (
+      (item instanceof ContextMenuItem || item instanceof ContextMenuSubmenu) &&
+      !item.disabled
+    );
   }
 
   private _setupUI(): void {

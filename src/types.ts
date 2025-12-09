@@ -41,14 +41,10 @@ export interface ContextMenuItemEventData {
  * Interface for menu items that can receive keyboard focus.
  */
 export interface Focusable {
-  /** Whether the item is disabled and cannot receive focus. */
-  readonly disabled: boolean;
   /** Focuses the item for keyboard navigation. */
   focus(): void;
   /** Removes focus from the item. */
   blur(): void;
-  /** Programmatically triggers a click on the item. */
-  click(): void;
 }
 
 export type MenuItem = ContextMenuItem | ContextMenuSeparator | ContextMenuSubmenu;
