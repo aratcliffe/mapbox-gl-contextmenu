@@ -1,6 +1,7 @@
 @mixin dark-mode-vars {
   --context-menu-bg: #141414;
-  --context-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --context-menu-shadow: 0 4px 26px -6px rgba(0, 0, 0, 0.4),
+    0 2px 12px -4px rgba(0, 0, 0, 0.2);
   --context-menu-item-text-color: white;
   --context-menu-item-focus-bg: #444444;
   --context-menu-item-active-bg: #2a2a2a;
@@ -24,7 +25,8 @@
   outline: none;
 
   --context-menu-bg: white;
-  --context-menu-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --context-menu-shadow: 0 4px 26px -6px rgba(0, 0, 0, 0.25),
+    0 2px 12px -4px rgba(0, 0, 0, 0.12);
   --context-menu-item-font-size: 13px;
   --context-menu-item-text-color: black;
   --context-menu-item-focus-bg: #e8e8e8;
