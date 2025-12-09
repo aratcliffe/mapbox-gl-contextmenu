@@ -14,7 +14,7 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", () => {
-  const contextMenu = new MapboxContextMenu({ width: 200 });
+  const contextMenu = new MapboxContextMenu({ width: 220 });
 
   const showCoordinatesItem = new ContextMenuItem({
     label: "Copy coordinates",

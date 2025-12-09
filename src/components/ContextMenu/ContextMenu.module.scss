@@ -13,16 +13,19 @@
   padding: 4px 0;
   background: var(--context-menu-bg);
   border-radius: var(--context-menu-border-radius, 5px);
-  box-shadow: 0 6px 38px -10px #16171859, 0 6px 20px -15px #16171833;
+  box-shadow: 0 6px 38px -10px #16171870, 0 6px 20px -15px #16171845;
   min-width: var(--context-menu-min-width, 200px);
+  font-family: var(--context-menu-font-family);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
   z-index: 10;
   transition: opacity 120ms ease-out;
   outline: none;
-
   --context-menu-bg: white;
+  --context-menu-font-family: -apple-system, BlinkMacSystemFont, avenir next,
+    avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial,
+    sans-serif;
   --context-menu-item-font-size: 13px;
   --context-menu-item-text-color: black;
   --context-menu-item-focus-bg: #e8e8e8;
@@ -47,8 +50,4 @@
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-}
-
-.submenu {
-  box-shadow: 0 8px 44px -10px #16171866, 0 8px 24px -15px #16171840;
 }
