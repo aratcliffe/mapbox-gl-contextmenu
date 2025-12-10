@@ -69,6 +69,12 @@ map.on("load", () => {
 
   // Building-specific context menu
   const buildingMenu = new MapboxContextMenu({ width: 200 });
+
+  for (const item of createCommonItems()) {
+    buildingMenu.addItem(item);
+  }
+
+  buildingMenu.addItem(new ContextMenuSeparator());
   buildingMenu.addItem(new ContextMenuLabel({ text: "Building" }));
 
   const buildingInfoItem = new ContextMenuItem({
@@ -82,11 +88,6 @@ map.on("load", () => {
   });
 
   buildingMenu.addItem(buildingInfoItem);
-  buildingMenu.addItem(new ContextMenuSeparator());
-
-  for (const item of createCommonItems()) {
-    buildingMenu.addItem(item);
-  }
 
   buildingMenu.addTo(map, { featuresetId: "buildings", importId: "basemap" });
 });

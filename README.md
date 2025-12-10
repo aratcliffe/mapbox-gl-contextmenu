@@ -6,6 +6,15 @@ A context menu plugin for Mapbox GL JS and MapLibre GL JS.
   <img src="assets/screenshot.png" width="800" alt="Context menu example showing menu items and submenu">
 </p>
 
+## Features
+
+- Context menus for the entire map or scoped to specific layers.
+- Menu items, section labels, separators, and nested submenus.
+- Customizable items with start/end content slots.
+- Click handlers receive map event data.
+- Full keyboard navigation.
+- Light and dark themes.
+
 ## Installation
 
 ### npm
@@ -41,6 +50,7 @@ Or using jsDelivr:
 ```ts
 import mapboxgl from "mapbox-gl";
 import { MapboxContextMenu, ContextMenuItem } from "mapbox-gl-contextmenu";
+import "mapbox-gl-contextmenu/style.css";
 
 const map = new mapboxgl.Map({
   /* ... */
@@ -128,7 +138,7 @@ item.on("click", ({ lngLat, map, point, features }) => {
 
 **Options:**
 
-- `label` - a textual label to display.
+- `label` - a text label to display.
 - `start` - content to display before the label. See [Slot Content](#slot-content).
 - `end` - content to display after the label. See [Slot Content](#slot-content).
 - `disabled` - whether the item is disabled. Defaults to `false`.
@@ -171,6 +181,21 @@ submenu.addItem(new ContextMenuItem({ label: "Option B" }));
 - `addItem(item)` - add an item to the submenu.
 - `insertItem(index, item)` - insert an item at a specific index.
 - `removeItem(item)` - remove an item from the submenu.
+
+### ContextMenuLabel
+
+A non-interactive text label for grouping menu items into sections.
+
+```ts
+menu.addItem(new ContextMenuLabel({ text: "Navigation" }));
+menu.addItem(new ContextMenuItem({ label: "Center map here" }));
+menu.addItem(new ContextMenuItem({ label: "Zoom in" }));
+```
+
+**Options:**
+
+- `text` - the text to display.
+- `className` - custom CSS class for the label element.
 
 ### ContextMenuSeparator
 
@@ -217,7 +242,7 @@ new ContextMenuItem({
 
 ### Object Notation
 
-A concise way to create elements:
+Create elements declaratively:
 
 ```ts
 new ContextMenuItem({
@@ -273,7 +298,7 @@ Mapbox GL JS v3.9.0 introduced expanded targeting options, through the [Interact
 menu.addTo(map, { featuresetId: "buildings", importId: "basemap" });
 ```
 
-You can also target layers using this object notation:
+You can also target layers using this notation:
 
 ```ts
 menu.addTo(map, { layerId: "my-custom-layer" });
