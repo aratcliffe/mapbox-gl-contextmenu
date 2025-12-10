@@ -8,6 +8,14 @@ import {
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
+const hint = document.getElementById("hint");
+
+function dismissHint() {
+  if (hint && !hint.classList.contains("hidden")) {
+    hint.classList.add("hidden");
+  }
+}
+
 const map = new mapboxgl.Map({
   container: "map",
   center: [-122.4194, 37.7749],
@@ -57,14 +65,6 @@ function createCommonItems() {
   ];
 }
 
-// Dismiss hint on first right-click
-const hint = document.getElementById("hint");
-map.on("contextmenu", () => {
-  if (hint && !hint.classList.contains("hidden")) {
-    hint.classList.add("hidden");
-  }
-});
-
 map.on("load", () => {
   // General context menu (anywhere on the map)
   const contextMenu = new MapboxContextMenu({ width: 200 });
@@ -73,6 +73,7 @@ map.on("load", () => {
     contextMenu.addItem(item);
   }
 
+  contextMenu.on("show", dismissHint);
   contextMenu.addTo(map);
 
   // Building-specific context menu
@@ -97,5 +98,6 @@ map.on("load", () => {
 
   buildingMenu.addItem(buildingInfoItem);
 
+  buildingMenu.on("show", dismissHint);
   buildingMenu.addTo(map, { featuresetId: "buildings", importId: "basemap" });
 });

@@ -1,4 +1,5 @@
 import { ContextMenuContext, MenuItem } from "../../types";
+import { Evented } from "../../util/evented";
 import { isFocusable } from "../../util/focusable";
 import ContextMenuItem from "../ContextMenuItem/ContextMenuItem";
 import ContextMenuSubmenu from "../ContextMenuSubmenu/ContextMenuSubmenu";
@@ -16,7 +17,14 @@ export interface ContextMenuOptions {
   width?: string | number;
 }
 
-export default class ContextMenu {
+export type ContextMenuEvents = {
+  /** Fired when the context menu is shown. */
+  show: void;
+  /** Fired when the context menu is hidden. */
+  hide: void;
+};
+
+export default class ContextMenu extends Evented<ContextMenuEvents> {
   protected _items: MenuItem[] = [];
   protected _className: string;
   protected _theme: ContextMenuTheme;
@@ -31,6 +39,7 @@ export default class ContextMenu {
   private _onEscapeLeft: (() => void) | null = null;
 
   constructor(options?: ContextMenuOptions) {
+    super();
     this._className = options?.className
       ? `${styles.menu} ${options.className}`
       : styles.menu;
@@ -218,6 +227,8 @@ export default class ContextMenu {
       // Check if mouse is already over a menu item (menu appeared under cursor)
       this._focusItemUnderMouse();
     }
+
+    this.fire("show", undefined as void);
   }
 
   /**
@@ -248,6 +259,8 @@ export default class ContextMenu {
         item.closeSubmenu();
       }
     });
+
+    this.fire("hide", undefined as void);
   }
 
   private _focusItem(index: number): void {
