@@ -57,6 +57,14 @@ function createCommonItems() {
   ];
 }
 
+// Dismiss hint on first right-click
+const hint = document.getElementById("hint");
+map.on("contextmenu", () => {
+  if (hint && !hint.classList.contains("hidden")) {
+    hint.classList.add("hidden");
+  }
+});
+
 map.on("load", () => {
   // General context menu (anywhere on the map)
   const contextMenu = new MapboxContextMenu({ width: 200 });

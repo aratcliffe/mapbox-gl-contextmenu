@@ -30,10 +30,30 @@
         width: 100vw;
         height: 100vh;
       }
+
+      #hint {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.75);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        pointer-events: none;
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+      }
+
+      #hint.hidden {
+        opacity: 0;
+      }
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <div id="hint">Right-click on the map to open the context menu</div>
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.16.0/mapbox-gl.js"></script>
     <script type="module" src="./index.js"></script>
   </body>
