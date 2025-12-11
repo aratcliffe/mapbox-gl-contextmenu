@@ -17,6 +17,16 @@ A context menu plugin for Mapbox GL JS and MapLibre GL JS.
 - Full keyboard navigation.
 - Light and dark themes.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+- [Slots](#slots)
+- [Layer Targeting](#layer-targeting)
+- [Keyboard Navigation](#keyboard-navigation)
+- [Theming](#theming)
+
 ## Installation
 
 ### npm
